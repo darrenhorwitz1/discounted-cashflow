@@ -17,15 +17,26 @@ class Revenue implements LineItem, TaxableLineItem {
   applyForecast(input: Input, previousCashFlow?: Cashflow): void {
     //cant grow without a Revenue line Item from T-1
     if (previousCashFlow == undefined) return;
+    //last years total revenue
+    let prevTotal: number = 0;
+    previousCashFlow.getLineItems().forEach((item) => {
+      if (item.getType() == this.type) {
+        prevTotal += item.getAmount();
+      }
+    });
 
-    // TODO
-    // let prevAmt: number = previousCashFlow.getAmount();
-    // this.amount = prevAmt * (1 + input.getVariableAmount());
+    let growthRate = input.getVariableAmount();
+    this.growRevenue(prevTotal,growthRate);
+
   }
   applyTax(input: TaxRate): void {
     this.postTaxAmount = this.amount * input.getResidualMargin();
   }
   getPostTaxAmount(): number {
     return this.postTaxAmount;
+  }
+
+  growRevenue(prevRevenueTotal: number, growthRate: number): void {
+    this.amount = prevRevenueTotal * (1 + growthRate);
   }
 }
