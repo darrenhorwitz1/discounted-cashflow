@@ -38,7 +38,7 @@ class Expense implements LineItem, TaxableLineItem {
     return this.postTaxAmount;
   }
 
-  calculateExpense(margin: number, revenue: number): void {
+  private calculateExpense(margin: number, revenue: number): void {
     this.amount = margin * revenue;
   }
 }
