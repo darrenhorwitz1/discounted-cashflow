@@ -1,11 +1,18 @@
-class Expense implements LineItem, TaxableLineItem {
+import Cashflow from "../../cashflow/cashflow";
+import Input from "../../input-variables/input";
+import TaxRate from "../../input-variables/variables/tax-rate";
+import { ELineItemType, LineItem, TaxableLineItem } from "../line-item";
+
+export default class Expense implements LineItem, TaxableLineItem {
   private amount: number;
   private postTaxAmount: number;
   private type: ELineItemType;
-  constructor(amount: number = 0) {
+  private input: Input;
+  constructor(amount: number = 0, margin: Input) {
     this.amount = amount;
     this.postTaxAmount = amount;
     this.type = ELineItemType.EXPENSE;
+    this.input = margin;
   }
   getAmount(): number {
     return this.amount;
@@ -14,12 +21,19 @@ class Expense implements LineItem, TaxableLineItem {
     return this.type;
   }
   applyForecast(
-    input: Input,
+    input?: Input,
     previousCashflow?: Cashflow,
     currentCashflow?: Cashflow
   ): void {
     //do something
     // TODO
+    let _input: Input;
+    if (input == undefined) {
+      _input = this.input;
+    } else {
+      _input = input;
+    }
+
     if (currentCashflow == undefined) return;
     let revenueTotal: number = 0;
     currentCashflow.getLineItems().forEach((item) => {
@@ -28,7 +42,7 @@ class Expense implements LineItem, TaxableLineItem {
       }
     });
 
-    let margin: number = input.getVariableAmount();
+    let margin: number = _input.getVariableAmount();
     this.calculateExpense(margin, revenueTotal);
   }
   applyTax(input: TaxRate): void {

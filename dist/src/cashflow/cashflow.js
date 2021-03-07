@@ -1,2 +1,2 @@
 "use strict";
-// class FreeCashflow implements Cashflow {}
+Object.defineProperty(exports, "__esModule", { value: true });

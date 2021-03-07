@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 class DiscountRate {
     constructor(rate) {
         this.rate = rate;
@@ -10,3 +11,4 @@ class DiscountRate {
         return this.rate;
     }
 }
+exports.default = DiscountRate;

@@ -1,10 +1,19 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const line_item_1 = require("../line-item/line-item");
 class FreeCashflow {
-    constructor(period, discountRate) {
+    constructor(period, dcf, discountRate) {
         this.lineItems = [];
         this.period = period;
         this.discountRate = discountRate;
         this.aggregateTotal = 0;
+        this.dcf = dcf;
+    }
+    resetLineItems() {
+        this.lineItems = [];
+    }
+    addLineItem(lineItem) {
+        this.lineItems.push(lineItem);
     }
     setPeriod(period) {
         this.period = period;
@@ -26,16 +35,46 @@ class FreeCashflow {
         return null;
     }
     aggregateLineItems() {
-        let total = 0;
+        let otherLineItems = [];
+        let revenueList = [];
+        let prev = this.previousPeriod(this.dcf);
+        let next = this.nextPeriod(this.dcf);
         this.lineItems.forEach((item) => {
+            if (item.getType() == line_item_1.ELineItemType.REVENUE) {
+                revenueList.push(item);
+            }
+            else {
+                otherLineItems.push(item);
+            }
+        });
+        let total = 0;
+        revenueList.forEach((item) => {
+            item.applyForecast(undefined, prev, next);
+            total += item.getAmount();
+        });
+        //TODO apply tax
+        otherLineItems.forEach((item) => {
+            item.applyForecast(undefined, prev, next);
             total += item.getAmount();
         });
         this.aggregateTotal = total;
     }
     nextPeriod(dcf) {
-        throw new Error("Method not implemented.");
+        let cfList = dcf.cashflows;
+        if (this.period == cfList.length - 1) {
+            return undefined;
+        }
+        else {
+            return cfList[this.period + 1];
+        }
     }
     previousPeriod(dcf) {
-        throw new Error("Method not implemented.");
+        if (this.period <= 0) {
+            return undefined;
+        }
+        else {
+            return dcf.cashflows[this.period - 1];
+        }
     }
 }
+exports.default = FreeCashflow;

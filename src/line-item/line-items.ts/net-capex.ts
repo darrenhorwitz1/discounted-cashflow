@@ -1,9 +1,15 @@
-class NetCapex implements LineItem {
+import Cashflow from "../../cashflow/cashflow";
+import Input from "../../input-variables/input";
+import { ELineItemType, LineItem } from "../line-item";
+
+export default class NetCapex implements LineItem {
   private type: ELineItemType;
   private amount: number;
-  constructor(amount: number = 0) {
+  private input: Input;
+  constructor(amount: number = 0, margin: Input) {
     this.amount = amount;
     this.type = ELineItemType.NET_CAPEX;
+    this.input = margin;
   }
   getAmount(): number {
     return this.amount;
@@ -18,10 +24,15 @@ class NetCapex implements LineItem {
   ): void {
     //TODO
     //need to get current revenue and apply margin to it
-
+    let _input: Input;
+    if (input == undefined) {
+      _input = this.input;
+    } else {
+      _input = input;
+    }
     if (currentCashflow == undefined) return;
     let revenue: number = this.revenueTotal(currentCashflow);
-    let margin: number = input.getVariableAmount();
+    let margin: number = _input.getVariableAmount();
 
     this.calculateNetCapex(margin, revenue);
   }

@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 class GrowthRate {
     constructor(rate) {
         this.growthRate = rate;
@@ -10,3 +11,4 @@ class GrowthRate {
         return (1 + this.growthRate) ^ time;
     }
 }
+exports.default = GrowthRate;

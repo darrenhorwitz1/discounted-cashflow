@@ -1,4 +1,5 @@
-class DiscountedCashflow {
+import Cashflow from "../cashflow/cashflow";
+export default class DiscountedCashflow {
   private _presentValue: number | null;
 
   private _cashflows: Cashflow[];
@@ -20,6 +21,7 @@ class DiscountedCashflow {
     let pv: number = 0;
     this._cashflows.forEach((cf) => {
       let pvCF = cf.discountCashflow();
+      console.log(pvCF);
       if (pvCF != null) {
         pv += pvCF;
       }

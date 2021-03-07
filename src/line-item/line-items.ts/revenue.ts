@@ -1,12 +1,19 @@
-class Revenue implements LineItem, TaxableLineItem {
+import Cashflow from "../../cashflow/cashflow";
+import Input from "../../input-variables/input";
+import TaxRate from "../../input-variables/variables/tax-rate";
+import { ELineItemType, LineItem, TaxableLineItem } from "../line-item";
+
+export default class Revenue implements LineItem, TaxableLineItem {
   private amount: number;
   private postTaxAmount: number;
   private type: ELineItemType;
+  private input: Input;
 
-  constructor(amount: number = 0) {
+  constructor(amount: number = 0, growthRate: Input) {
     this.type = ELineItemType.REVENUE;
     this.amount = amount;
     this.postTaxAmount = amount;
+    this.input = growthRate;
   }
   getAmount(): number {
     return this.amount;
@@ -15,6 +22,12 @@ class Revenue implements LineItem, TaxableLineItem {
     return this.type;
   }
   applyForecast(input: Input, previousCashFlow?: Cashflow): void {
+    let _input: Input;
+    if (input == undefined) {
+      _input = this.input;
+    } else {
+      _input = input;
+    }
     //cant grow without a Revenue line Item from T-1
     if (previousCashFlow == undefined) return;
     //last years total revenue
@@ -25,9 +38,8 @@ class Revenue implements LineItem, TaxableLineItem {
       }
     });
 
-    let growthRate = input.getVariableAmount();
-    this.growRevenue(prevTotal,growthRate);
-
+    let growthRate = _input.getVariableAmount();
+    this.growRevenue(prevTotal, growthRate);
   }
   applyTax(input: TaxRate): void {
     this.postTaxAmount = this.amount * input.getResidualMargin();

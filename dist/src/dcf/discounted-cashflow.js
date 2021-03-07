@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 class DiscountedCashflow {
     constructor() {
         this._presentValue = null;
@@ -15,6 +16,7 @@ class DiscountedCashflow {
         let pv = 0;
         this._cashflows.forEach((cf) => {
             let pvCF = cf.discountCashflow();
+            console.log(pvCF);
             if (pvCF != null) {
                 pv += pvCF;
             }
@@ -38,3 +40,4 @@ class DiscountedCashflow {
         });
     }
 }
+exports.default = DiscountedCashflow;

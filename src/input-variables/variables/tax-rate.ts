@@ -1,4 +1,7 @@
-class TaxRate implements Input, IMargin {
+import Input from "../input";
+import IMargin from "../margin";
+
+export default class TaxRate implements Input, IMargin {
   private taxRate: number;
   constructor(taxRate: number) {
     this.taxRate = taxRate;

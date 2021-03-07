@@ -1,4 +1,7 @@
-class GrowthRate implements Input, Rate {
+import Input from "../input";
+import Rate from "../rate";
+
+export default class GrowthRate implements Input, Rate {
   private growthRate: number;
 
   constructor(rate: number) {

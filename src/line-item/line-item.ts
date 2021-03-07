@@ -1,11 +1,14 @@
-enum ELineItemType {
+import Cashflow from "../cashflow/cashflow";
+import Input from "../input-variables/input";
+
+export enum ELineItemType {
   REVENUE,
   EXPENSE,
   NET_CAPEX,
   WORKING_CAPITAL_DELTA,
 }
 
-interface LineItem {
+export interface LineItem {
   getAmount(): number;
   getType(): ELineItemType;
   applyForecast(
@@ -14,7 +17,7 @@ interface LineItem {
     currentCashflow?: Cashflow
   ): void;
 }
-interface TaxableLineItem {
+export interface TaxableLineItem {
   applyTax(input: Input): void;
   getPostTaxAmount(): number;
 }

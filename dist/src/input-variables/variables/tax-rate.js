@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 class TaxRate {
     constructor(taxRate) {
         this.taxRate = taxRate;
@@ -10,3 +11,4 @@ class TaxRate {
         return this.taxRate;
     }
 }
+exports.default = TaxRate;

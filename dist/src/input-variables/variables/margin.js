@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 class Margin {
     constructor(margin) {
         this.margin = margin;
@@ -10,3 +11,4 @@ class Margin {
         return 1 - this.margin;
     }
 }
+exports.default = Margin;

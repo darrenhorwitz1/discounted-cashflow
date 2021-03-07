@@ -1,9 +1,12 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const line_item_1 = require("../line-item");
 class Revenue {
-    constructor(amount = 0) {
-        this.type = ELineItemType.REVENUE;
+    constructor(amount = 0, growthRate) {
+        this.type = line_item_1.ELineItemType.REVENUE;
         this.amount = amount;
         this.postTaxAmount = amount;
+        this.input = growthRate;
     }
     getAmount() {
         return this.amount;
@@ -11,12 +14,26 @@ class Revenue {
     getType() {
         return this.type;
     }
-    applyForecast(input, prevCFLineItem) {
+    applyForecast(input, previousCashFlow) {
+        let _input;
+        if (input == undefined) {
+            _input = this.input;
+        }
+        else {
+            _input = input;
+        }
         //cant grow without a Revenue line Item from T-1
-        if (prevCFLineItem == undefined)
+        if (previousCashFlow == undefined)
             return;
-        let prevAmt = prevCFLineItem.getAmount();
-        this.amount = prevAmt * (1 + input.getVariableAmount());
+        //last years total revenue
+        let prevTotal = 0;
+        previousCashFlow.getLineItems().forEach((item) => {
+            if (item.getType() == this.type) {
+                prevTotal += item.getAmount();
+            }
+        });
+        let growthRate = _input.getVariableAmount();
+        this.growRevenue(prevTotal, growthRate);
     }
     applyTax(input) {
         this.postTaxAmount = this.amount * input.getResidualMargin();
@@ -24,7 +41,8 @@ class Revenue {
     getPostTaxAmount() {
         return this.postTaxAmount;
     }
+    growRevenue(prevRevenueTotal, growthRate) {
+        this.amount = prevRevenueTotal * (1 + growthRate);
+    }
 }
-let t = new TaxRate(0.28);
-let t1 = new Margin(0.5);
-let r = new Revenue(100);
+exports.default = Revenue;

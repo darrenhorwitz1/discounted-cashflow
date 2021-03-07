@@ -1,3 +1,3 @@
-interface Input {
+export default interface Input {
   getVariableAmount(): number;
 }
