@@ -16,7 +16,6 @@ class DiscountedCashflow {
         let pv = 0;
         this._cashflows.forEach((cf) => {
             let pvCF = cf.discountCashflow();
-            console.log(pvCF);
             if (pvCF != null) {
                 pv += pvCF;
             }

@@ -2,11 +2,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const line_item_1 = require("../line-item/line-item");
 class FreeCashflow {
-    constructor(period, dcf, discountRate) {
+    constructor(period, dcf, discountRate, taxRate) {
         this.lineItems = [];
         this.period = period;
         this.discountRate = discountRate;
         this.aggregateTotal = 0;
+        this.taxRate = taxRate;
         this.dcf = dcf;
     }
     resetLineItems() {
@@ -28,17 +29,18 @@ class FreeCashflow {
         return this.lineItems;
     }
     discountCashflow() {
-        var _a;
         this.aggregateLineItems();
-        if (this.discountRate != undefined)
-            return ((_a = this.discountRate) === null || _a === void 0 ? void 0 : _a.getFactor(this.period)) * this.aggregateTotal;
+        if (this.discountRate != undefined) {
+            let pv = this.discountRate.getFactor(this.period) * this.aggregateTotal;
+            return pv;
+        }
         return null;
     }
     aggregateLineItems() {
         let otherLineItems = [];
         let revenueList = [];
         let prev = this.previousPeriod(this.dcf);
-        let next = this.nextPeriod(this.dcf);
+        let current = this;
         this.lineItems.forEach((item) => {
             if (item.getType() == line_item_1.ELineItemType.REVENUE) {
                 revenueList.push(item);
@@ -49,15 +51,27 @@ class FreeCashflow {
         });
         let total = 0;
         revenueList.forEach((item) => {
-            item.applyForecast(undefined, prev, next);
-            total += item.getAmount();
+            item.applyForecast(undefined, prev);
+            //applying tax
+            item.applyTax(this.taxRate);
+            total += item.getPostTaxAmount();
         });
         //TODO apply tax
         otherLineItems.forEach((item) => {
-            item.applyForecast(undefined, prev, next);
-            total += item.getAmount();
+            item.applyForecast(undefined, prev, current);
+            if (item.getType() == line_item_1.ELineItemType.EXPENSE) {
+                //applying the tax
+                item.applyTax(this.taxRate);
+                total += item.getPostTaxAmount();
+            }
+            else {
+                total += item.getAmount();
+            }
         });
         this.aggregateTotal = total;
+    }
+    setTaxRate(taxRate) {
+        this.taxRate = taxRate;
     }
     nextPeriod(dcf) {
         let cfList = dcf.cashflows;

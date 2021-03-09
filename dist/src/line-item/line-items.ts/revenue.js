@@ -36,6 +36,8 @@ class Revenue {
         this.growRevenue(prevTotal, growthRate);
     }
     applyTax(input) {
+        if (input == undefined)
+            return;
         this.postTaxAmount = this.amount * input.getResidualMargin();
     }
     getPostTaxAmount() {

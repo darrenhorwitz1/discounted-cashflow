@@ -39,8 +39,7 @@ class WorkingCapitalDelta {
         let nwc = 0;
         cashflow.getLineItems().forEach((item) => {
             if (item.getType() == this.type) {
-                let w = item;
-                nwc += w.getNWC();
+                nwc += item.getNWC();
             }
         });
         return nwc;

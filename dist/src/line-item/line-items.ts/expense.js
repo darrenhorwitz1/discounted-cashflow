@@ -36,13 +36,15 @@ class Expense {
         this.calculateExpense(margin, revenueTotal);
     }
     applyTax(input) {
+        if (input == undefined)
+            return;
         this.postTaxAmount = this.amount * input.getResidualMargin();
     }
     getPostTaxAmount() {
         return this.postTaxAmount;
     }
     calculateExpense(margin, revenue) {
-        this.amount = margin * revenue;
+        this.amount = margin * revenue * -1;
     }
 }
 exports.default = Expense;

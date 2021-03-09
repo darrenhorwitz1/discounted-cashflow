@@ -30,7 +30,7 @@ class NetCapex {
         this.calculateNetCapex(margin, revenue);
     }
     calculateNetCapex(margin, revenue) {
-        this.amount = margin * revenue;
+        this.amount = margin * revenue * -1;
     }
     revenueTotal(cashflow) {
         let total = 0;

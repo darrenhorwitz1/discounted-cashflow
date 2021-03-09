@@ -5,7 +5,9 @@ class DiscountRate {
         this.rate = rate;
     }
     getFactor(time) {
-        return 1 / ((1 + this.rate) ^ time);
+        let denom = Math.pow(1 + this.rate, time);
+        let factor = 1 / denom;
+        return factor;
     }
     getVariableAmount() {
         return this.rate;
