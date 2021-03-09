@@ -1,6 +1,10 @@
 import DiscountedCashflow from "../dcf/discounted-cashflow";
 import Rate from "../input-variables/rate";
-import { ELineItemType, LineItem } from "../line-item/line-item";
+import {
+  ELineItemType,
+  LineItem,
+  TaxableLineItem,
+} from "../line-item/line-item";
 import Expense from "../line-item/line-items.ts/expense";
 import Cashflow from "./cashflow";
 import ITaxRate from "../input-variables/ITaxRate";
@@ -49,7 +53,6 @@ export default class FreeCashflow implements Cashflow {
     this.aggregateLineItems();
     if (this.discountRate != undefined) {
       let pv = this.discountRate.getFactor(this.period) * this.aggregateTotal;
-      console.log("discountCashflow()", pv, "time", this.period);
       return pv;
     }
     return null;
@@ -58,7 +61,7 @@ export default class FreeCashflow implements Cashflow {
     let otherLineItems: LineItem[] = [];
     let revenueList: LineItem[] = [];
     let prev = this.previousPeriod(this.dcf);
-    let next = this.nextPeriod(this.dcf);
+    let current = this;
     this.lineItems.forEach((item) => {
       if (item.getType() == ELineItemType.REVENUE) {
         revenueList.push(item);
@@ -69,19 +72,21 @@ export default class FreeCashflow implements Cashflow {
 
     let total: number = 0;
     revenueList.forEach((item) => {
-      item.applyForecast(undefined, prev, next);
+      item.applyForecast(undefined, prev);
       //applying tax
       (<Revenue>item).applyTax(this.taxRate);
-      total += item.getAmount();
+      total +=  (<Revenue>item).getPostTaxAmount();
     });
     //TODO apply tax
     otherLineItems.forEach((item) => {
-      item.applyForecast(undefined, prev, next);
+      item.applyForecast(undefined, prev, current);
       if (item.getType() == ELineItemType.EXPENSE) {
         //applying the tax
         (<Expense>item).applyTax(this.taxRate);
+        total += (<Expense>item).getPostTaxAmount();
+      } else {
+        total += item.getAmount();
       }
-      total += item.getAmount();
     });
 
     this.aggregateTotal = total;

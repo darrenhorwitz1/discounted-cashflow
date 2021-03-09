@@ -55,6 +55,6 @@ export default class Expense implements LineItem, TaxableLineItem {
   }
 
   private calculateExpense(margin: number, revenue: number): void {
-    this.amount = margin * revenue;
+    this.amount = margin * revenue*-1;
   }
 }

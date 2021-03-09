@@ -37,7 +37,7 @@ export default class NetCapex implements LineItem {
     this.calculateNetCapex(margin, revenue);
   }
   private calculateNetCapex(margin: number, revenue: number): void {
-    this.amount = margin * revenue;
+    this.amount = margin * revenue * -1;
   }
   private revenueTotal(cashflow: Cashflow): number {
     let total: number = 0;

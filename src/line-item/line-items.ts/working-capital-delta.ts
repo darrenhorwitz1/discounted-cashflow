@@ -50,8 +50,7 @@ export default class WorkingCapitalDelta implements LineItem {
 
     cashflow.getLineItems().forEach((item) => {
       if (item.getType() == this.type) {
-        let w: WorkingCapitalDelta = <WorkingCapitalDelta>item;
-        nwc += w.getNWC();
+        nwc += (<WorkingCapitalDelta>item).getNWC();
       }
     });
     return nwc;
