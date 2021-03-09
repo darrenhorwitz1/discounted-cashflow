@@ -18,6 +18,6 @@ export interface LineItem {
   ): void;
 }
 export interface TaxableLineItem {
-  applyTax(input: Input): void;
+  applyTax(input: Input | undefined): void;
   getPostTaxAmount(): number;
 }

@@ -1,19 +1,29 @@
 import DiscountedCashflow from "../dcf/discounted-cashflow";
 import Rate from "../input-variables/rate";
 import { ELineItemType, LineItem } from "../line-item/line-item";
+import Expense from "../line-item/line-items.ts/expense";
 import Cashflow from "./cashflow";
+import ITaxRate from "../input-variables/ITaxRate";
+import Revenue from "../line-item/line-items.ts/revenue";
 export default class FreeCashflow implements Cashflow {
   private period: number;
   private aggregateTotal: number;
   private discountRate: Rate | undefined;
+  private taxRate: ITaxRate | undefined;
   private lineItems: LineItem[];
   private dcf: DiscountedCashflow;
 
-  constructor(period: number, dcf: DiscountedCashflow, discountRate?: Rate) {
+  constructor(
+    period: number,
+    dcf: DiscountedCashflow,
+    discountRate?: Rate,
+    taxRate?: ITaxRate
+  ) {
     this.lineItems = [];
     this.period = period;
     this.discountRate = discountRate;
     this.aggregateTotal = 0;
+    this.taxRate = taxRate;
     this.dcf = dcf;
   }
   resetLineItems(): void {
@@ -60,15 +70,25 @@ export default class FreeCashflow implements Cashflow {
     let total: number = 0;
     revenueList.forEach((item) => {
       item.applyForecast(undefined, prev, next);
+      //applying tax
+      (<Revenue>item).applyTax(this.taxRate);
       total += item.getAmount();
     });
     //TODO apply tax
     otherLineItems.forEach((item) => {
       item.applyForecast(undefined, prev, next);
+      if (item.getType() == ELineItemType.EXPENSE) {
+        //applying the tax
+        (<Expense>item).applyTax(this.taxRate);
+      }
       total += item.getAmount();
     });
 
     this.aggregateTotal = total;
+  }
+
+  setTaxRate(taxRate: ITaxRate): void {
+    this.taxRate = taxRate;
   }
 
   nextPeriod(dcf: DiscountedCashflow): Cashflow | undefined {

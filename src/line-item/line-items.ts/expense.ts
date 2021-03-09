@@ -1,5 +1,6 @@
 import Cashflow from "../../cashflow/cashflow";
 import Input from "../../input-variables/input";
+import ITaxRate from "../../input-variables/ITaxRate";
 import TaxRate from "../../input-variables/variables/tax-rate";
 import { ELineItemType, LineItem, TaxableLineItem } from "../line-item";
 
@@ -45,8 +46,9 @@ export default class Expense implements LineItem, TaxableLineItem {
     let margin: number = _input.getVariableAmount();
     this.calculateExpense(margin, revenueTotal);
   }
-  applyTax(input: TaxRate): void {
-    this.postTaxAmount = this.amount * input.getResidualMargin();
+  applyTax(input: Input | undefined): void {
+    if (input == undefined) return;
+    this.postTaxAmount = this.amount *  (<ITaxRate> input).getResidualMargin();
   }
   getPostTaxAmount(): number {
     return this.postTaxAmount;

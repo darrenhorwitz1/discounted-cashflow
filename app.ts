@@ -5,7 +5,7 @@ import GrowthRate from "./src/input-variables/variables/growth-rate";
 import Revenue from "./src/line-item/line-items.ts/revenue";
 
 let myDcf: DiscountedCashflow = new DiscountedCashflow();
-let discountRate: DiscountRate = new DiscountRate(0.1);
+let discountRate: DiscountRate = new DiscountRate(0.2);
 
 let cf0 = new FreeCashflow(0, myDcf, discountRate);
 let cf1 = new FreeCashflow(1, myDcf, discountRate);
